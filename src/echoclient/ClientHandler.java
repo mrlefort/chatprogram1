@@ -6,6 +6,7 @@
 package echoclient;
 
 import echoserver.EchoServer;
+import static echoserver.EchoServer.clientHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -26,6 +27,24 @@ public class ClientHandler implements Runnable {
     PrintWriter writer;
     
 
+    public void checkMsgProtocol(){
+        //feks. switch til at finde ud af hvilken protocolString det er.
+        //denne metode kan passende kalde sendMsgToSpecific(): 
+        //kan også passende kalde sendMessageToAll();
+    }
+    
+    public void sendMsgToSpecific(){
+        //kode til at sende til specific person
+    }
+    
+    static public void sendMessageToAll(String messageToAll){
+        //der skal nok en form for switch ind her, så man kan bestemme hvem man vil skrive til.
+        for (ClientHandler ch : clientHandlers) {
+            ch.sendMessage(messageToAll);
+        }
+    }
+    
+    
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
@@ -45,7 +64,7 @@ public class ClientHandler implements Runnable {
             System.out.println("ClientHandler: " + message);
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                EchoServer.sendMessageToAll(message);             //Her bliver beskeden sendt ud til ALLE klienter.
+                sendMessageToAll(message);             //Her bliver beskeden sendt ud til ALLE klienter.
                 
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call

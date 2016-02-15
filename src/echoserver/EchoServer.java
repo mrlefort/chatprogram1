@@ -30,29 +30,9 @@ public class EchoServer {
     }
 
    
-//    
-//    private static void handleClient(Socket socket) throws IOException {
-//        Scanner input = new Scanner(socket.getInputStream());
-//        PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-//
-//        String message = input.nextLine(); //IMPORTANT blocking call
-//        System.out.println(String.format("Received the message: %1$S ", message));
-//        while (!message.equals(ProtocolStrings.STOP)) {
-//            writer.println(message.toUpperCase());
-//            System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
-//            message = input.nextLine(); //IMPORTANT blocking call
-//        }
-//        writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
-//        socket.close();
-//        System.out.println("Closed a Connection");
-//    }
+    //hasmap som der har socket og brugernavn som key & value, til at finde ud af hvem man skal skrive til.
     
-    static public void sendMessageToAll(String messageToAll){
-        //der skal nok en form for switch ind her, så man kan bestemme hvem man vil skrive til.
-        for (ClientHandler ch : clientHandlers) {
-            ch.sendMessage(messageToAll);
-        }
-    }
+    
 
     private void runServer(String ip, int port) {
         this.port = port;
