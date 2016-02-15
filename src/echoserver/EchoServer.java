@@ -23,6 +23,8 @@ public class EchoServer {
     
     
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList();
+    //hasmap som der har socket og brugernavn som key & value, til at finde ud af hvem man skal skrive til.
+    //dvs dette her skal laves om til hashmap som logger deres socket og navne.
     
 
     public static void stopServer() {
@@ -30,7 +32,7 @@ public class EchoServer {
     }
 
    
-    //hasmap som der har socket og brugernavn som key & value, til at finde ud af hvem man skal skrive til.
+   
     
     
 
