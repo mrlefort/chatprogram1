@@ -205,6 +205,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
 
     @Override
     public void update(Observable o, Object arg) {
-        jTextArea1.setText((String) arg);
+        jTextArea1.append((String) arg + "\n");
+        
     }
 }
