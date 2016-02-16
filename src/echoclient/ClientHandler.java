@@ -27,68 +27,69 @@ public class ClientHandler implements Runnable {
     EchoServer ser = new EchoServer();
     Scanner input;
     PrintWriter writer;
-    
+
     String[] selectedUsers;
-    
-    String start = "";
-    String middle = "";
-    String end = "";
-    
-    
+
+    String start;
+    String middle;
+    String end;
 
     public void checkMsgProtocol(String message) {
+        start = "";
+        middle = "";
+        end = "";
         splitMessageFirst(message);
-        
-        if (start.equals("SEND")){
+
+        if (start.equals("USER")) {
+            //acknowledge the user and add him to hasmap plus start socket connection
+        } else if (start.equals("SEND")) {
             if (middle.equals("*")) {
                 sendMessageToAll(message);
             }
             sendMsgToSpecific(message);
-        
+
+        } else if (start.equals("LOGOUT")) {
+            //log the user out
         }
 
-
-        
     }
-    
+
     //splits the message received
-    public void splitMessageFirst(String message){
+    public void splitMessageFirst(String message) {
         String[] splitTheMessage = message.split("#");
         start = splitTheMessage[0];
         middle = splitTheMessage[1];
         end = splitTheMessage[2];
     }
-    
-    
-    
-        public void sendMsgToSpecific(String message){
+
+    public void sendMsgToSpecific(String message) {
         String[] splitReceivers = middle.split(",");
         ArrayList<ClientHandler> specificReceivers = new ArrayList();
-        
 
         for (int i = 0; i < splitReceivers.length; i++) {
-            for (int j = 0; j < EchoServer.clientHandlers.size(); j++) {           //skal skiftes fra min arrayliste til vores hashmap.
-                if (splitReceivers[i].equals(EchoServer.clientHandlers.get(j))){   //skal skiftes fra min arrayliste til vores hashmap.
+            for (int j = 0; j < EchoServer.clientHandlers.size(); j++) {           //EchoServer.clientHandlers skal skiftes fra min arrayliste til vores hashmap.
+                if (splitReceivers[i].equals(EchoServer.clientHandlers.get(j))) {   //EchoServer.clientHandlers skal skiftes fra min arrayliste til vores hashmap.
                     specificReceivers.add(EchoServer.clientHandlers.get(j));
-                    
+
                 }
             }
         }
-        
-            for (ClientHandler specificReceiver : specificReceivers) {
-                specificReceiver.sendMessage(end);
-            }
-        
+
+        for (ClientHandler specificReceiver : specificReceivers) {
+
+            specificReceiver.sendMessage(end);
+        }
+
     }
 
     public void sendMessageToAll(String message) {
-        
+
         for (ClientHandler ch : clientHandlers) {               //skal skiftes fra min arrayliste til vores hashmap.
 
             ch.sendMessage(end);
-        
+
         }
-        
+
     }
 
     public ClientHandler(Socket socket) {
