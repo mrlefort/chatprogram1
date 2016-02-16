@@ -10,9 +10,8 @@ import java.util.Observable;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.ProtocolStrings;
 
-public class EchoClient extends Observable implements Runnable {
+public class Client extends Observable implements Runnable {
 
     Socket socket;
     private int port;
@@ -38,18 +37,18 @@ public class EchoClient extends Observable implements Runnable {
     }
 
     public void stop() throws IOException {
-        output.println(ProtocolStrings.STOP);
+        output.println("LOGOFF");
     }
 
     public String receive() {
         String msg = input.nextLine();
         allMsg.add(msg + "\n");
         //skal noget kode, måske en switch, ind her så den "kører" protocollen og skriver til dem den skal.
-        if (msg.equals(ProtocolStrings.STOP)) {
+        if (msg.equals("LOGOFF")) {
             try {
                 socket.close();
             } catch (IOException ex) {
-                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         setChanged();
@@ -57,7 +56,7 @@ public class EchoClient extends Observable implements Runnable {
         return msg;
     }
 
-    public EchoClient(String ip, int port) throws IOException {
+    public Client(String ip, int port) throws IOException {
         this.port = port;
         this.ip = ip;
         connect(ip, port);

@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 
-import echoclient.EchoClient;
-import echoserver.EchoServer;
+import echoclient.Client;
+import echoserver.Server;
 import java.io.IOException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,19 +28,19 @@ public class TestEcho {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                EchoServer.main(null);
+                Server.main(null);
             }
         }).start();
     }
 
     @AfterClass
     public static void tearDownClass() {
-        EchoServer.stopServer();
+        Server.stopServer();
     }
 
     @Test
     public void send() throws IOException {
-        EchoClient client = new EchoClient("localhost", 9999);
+        Client client = new Client("localhost", 9999);
         client.connect("localhost", 9999);
         client.send("Hello");
         assertEquals("HELLO", client.receive());

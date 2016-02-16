@@ -22,7 +22,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
      * Creates new form Gui
      */
     
-    EchoClient c;
+    Client c;
     
     
     public ClientGui() {
@@ -226,7 +226,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         try {
-            c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()));
+            c = new Client(StringIp.getText(), Integer.parseInt(port.getText()));
             Thread client = new Thread(c);
             client.start();
             c.addObserver(this);
