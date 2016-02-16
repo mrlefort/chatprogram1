@@ -5,17 +5,16 @@
  */
 package echoserver;
 
-import echoserver.EchoServer;
 import static echoserver.EchoServer.clientHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *
@@ -34,7 +33,7 @@ public class EchoClientHandler implements Runnable
     private String start;
     private String middle;
     private String end;
-    private String userName;
+    private String userName = "";
 
     public void checkMsgProtocol(String message)
     {
@@ -45,25 +44,28 @@ public class EchoClientHandler implements Runnable
 
         if (start.equals("USER"))
         {
+            System.out.println("I USER middle er : " + middle);
             addUser(middle);
         }
         else if (start.equals("SEND"))
         {
             if (middle.equals("*"))
             {
+                System.out.println("vi sender til * " + end);
+                System.out.println("Vores navn er:" + userName);
                 String a = "MESSAGE#" + this.userName + "#" + end;
                 sendMessageToAll(a);
             }
             else
             {
                 String[] bob = middle.split(",");
-                String a = "MESSAGE#" + this.userName + "#" + end;
-                sendMsgToSpecific(bob, a);
+                String b = "MESSAGE#" + this.userName + "#" + end;
+                sendMsgToSpecific(bob, b);
             }
         }
         else if (start.equals("LOGOUT"))
         {
-            killThisClient(userName); 
+            killThisClient(userName);
         }
     }
 
@@ -89,7 +91,7 @@ public class EchoClientHandler implements Runnable
         }
 
     }
-    
+
     public void killThisClient(String userName)
     {
         System.out.println("lukker klienten!");
@@ -107,10 +109,10 @@ public class EchoClientHandler implements Runnable
         }
     }
 
-    public void addUser(String userName)
+    public void addUser(String input)
     {
-        EchoServer.users.put(userName, this);
-        this.userName = userName;
+        EchoServer.users.put(input, this);
+        userName = input;
         userList();
     }
 
@@ -125,11 +127,13 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessageToAll(String message)
     {
-        for (EchoClientHandler ch : EchoServer.users.values())
-        {               
+        System.out.println("her er besked i all: " + message);
+        for (EchoClientHandler ch : EchoServer.clientHandlers)
+        {
             
-            ch.sendMessage(message);
+            System.out.println("Her er user: " + ch.userName);
 
+            ch.sendMessage(message);
         }
 
     }
@@ -140,10 +144,10 @@ public class EchoClientHandler implements Runnable
 
         for (String user : EchoServer.users.keySet())
         {
-
             onlineMsg += user + ",";
 
         }
+        onlineMsg = onlineMsg.substring(0, onlineMsg.length() - 1);
         System.out.println("Her er den fulde liste: " + onlineMsg);
         for (EchoClientHandler ch : EchoServer.users.values())
         {
@@ -164,6 +168,7 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessage(String message)
     {
+        System.out.println("final send fra server = " + message);
         writer.println(message);
 
     }
@@ -197,7 +202,7 @@ public class EchoClientHandler implements Runnable
             socket.close();
             System.out.println("Closed a Connection");
         }
-        catch (IOException ex)
+        catch (IOException | NoSuchElementException ex)
         {
             Logger.getLogger(EchoClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

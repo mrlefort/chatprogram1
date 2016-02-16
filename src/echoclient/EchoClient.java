@@ -11,8 +11,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-public class EchoClient extends Observable implements Runnable {
+public class EchoClient extends Observable implements Runnable
+{
 
     Socket socket;
     private int port;
@@ -20,10 +20,11 @@ public class EchoClient extends Observable implements Runnable {
     private Scanner input;
     private PrintWriter output;
     ArrayList<String> allMsg = new ArrayList();
-    
+
     String ip;
 
-    public void connect(String address, int port) throws UnknownHostException, IOException {
+    public void connect(String address, int port) throws UnknownHostException, IOException
+    {
         this.port = port;
         serverAddress = InetAddress.getByName(address);
         socket = new Socket(serverAddress, port);
@@ -31,46 +32,64 @@ public class EchoClient extends Observable implements Runnable {
         output = new PrintWriter(socket.getOutputStream(), true);  //Set to true, to get auto flush behaviour
     }
 
-    public void send(String msg) {
+    public void send(String msg)
+    {
         System.out.println("Send method: " + msg);
         output.println(msg);
-        
+
     }
 
 //    public void stop() throws IOException {
 //        output.println("LOGOUT#");
 //    }
+    public String receive()
+    {
+     
+            String msg = input.nextLine();
+            System.out.println("Her er det vi har modtaget: " + msg);
+            allMsg.add(msg + "\n");
 
-    public String receive() {
-        String msg = input.nextLine();
-        allMsg.add(msg + "\n");
-        
-        if (msg.equals("LOGOUT#")) {
-            try {
-                socket.close();
-            } catch (IOException ex) {
-                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+            if (msg.equals("LOGOUT#"))
+            {
+                try
+                {
+                    socket.close();
+                }
+                catch (IOException ex)
+                {
+                    Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }
-        setChanged();
-        notifyObservers(msg);
-        return msg;
+            setChanged();
+            System.out.println("Her er det vi har modtaget: " + msg);
+            notifyObservers(msg);
+            return msg;
+        
     }
 
-    public EchoClient(String ip, int port) throws IOException {
+    public EchoClient(String ip, int port) throws IOException
+    {
         this.port = port;
         this.ip = ip;
-        connect(ip, port);
+        
     }
 
-
     @Override
-    public void run() {
-        while (true) {
-            
-            
+    public void run()
+    {
+        try
+        {
+            connect(ip, port);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        while (true)
+        {
+            System.out.println("RDY TO RECIEVE");
             receive();
-            
+
         }
     }
 }

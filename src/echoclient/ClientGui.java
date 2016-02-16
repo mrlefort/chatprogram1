@@ -232,44 +232,48 @@ public class ClientGui extends javax.swing.JFrame implements Observer
 
     private void send()
     {
-        if (!listofusers.isSelectionEmpty())
+        if (besked.getText().length() != 0)
         {
 
-            Object sel = null;
-
-            int[] selectedIx = this.listofusers.getSelectedIndices();
-
-            String[] stringarray = new String[selectedIx.length];
-
-            for (int i = 0; i < selectedIx.length; i++)
+            if (!listofusers.isSelectionEmpty())
             {
-                //      sel = jList1.getModel().getElementAt(selectedIx[i]);
-                stringarray[i] = listofusers.getModel().getElementAt(selectedIx[i]);
+
+                Object sel = null;
+
+                int[] selectedIx = this.listofusers.getSelectedIndices();
+
+                String[] stringarray = new String[selectedIx.length];
+
+                for (int i = 0; i < selectedIx.length; i++)
+                {
+                    //      sel = jList1.getModel().getElementAt(selectedIx[i]);
+                    stringarray[i] = listofusers.getModel().getElementAt(selectedIx[i]);
+
+                }
+
+                String mysendstring = "";
+                for (int o = 0; o < stringarray.length; o++)
+                {
+                    mysendstring = mysendstring + stringarray[o] + ",";
+                }
+
+                mysendstring = mysendstring.substring(0, mysendstring.length() - 1);
+
+                /// doo code here for when users are selected..
+                c.send("SEND#" + mysendstring + "#" + besked.getText());
+
+                besked.setText("");
+                besked.requestFocus();
 
             }
-
-            String mysendstring = "";
-            for (int o = 0; o < stringarray.length; o++)
+            else
             {
-                mysendstring = mysendstring + stringarray[o] + ",";
+
+                // send to all!
+                c.send("SEND#*#" + besked.getText());
+                besked.setText("");
+                besked.requestFocus();
             }
-
-            mysendstring = mysendstring.substring(0, mysendstring.length() - 1);
-
-            /// doo code here for when users are selected..
-            c.send(mysendstring);
-
-            besked.setText("");
-            besked.requestFocus();
-
-        }
-        else
-        {
-
-            // send to all!
-            c.send("SEND#*#" + besked.getText());
-            besked.setText("");
-            besked.requestFocus();
         }
     }
 
@@ -290,13 +294,15 @@ public class ClientGui extends javax.swing.JFrame implements Observer
             c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()));
             Thread client = new Thread(c);
             client.start();
+            System.out.println("her er usrName:" + username.getText());
+            usernamelabel.setText(username.getText());
             c.addObserver(this);
         }
         catch (IOException ex)
         {
             Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        c.send("USER#" + username.getText());
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

@@ -21,7 +21,7 @@ public class EchoServer {
     private String ip;
     private int port;
     private ArrayList<String> specificReceivers;
-    public static volatile HashMap<String, EchoClientHandler> users = new HashMap<>();
+    public static HashMap<String, EchoClientHandler> users = new HashMap<>();
     
     public static ArrayList<EchoClientHandler> clientHandlers = new ArrayList();
     
