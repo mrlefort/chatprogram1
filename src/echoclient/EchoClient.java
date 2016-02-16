@@ -10,7 +10,7 @@ import java.util.Observable;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.ProtocolStrings;
+
 
 public class EchoClient extends Observable implements Runnable {
 
@@ -38,14 +38,14 @@ public class EchoClient extends Observable implements Runnable {
     }
 
     public void stop() throws IOException {
-        output.println(ProtocolStrings.STOP);
+        output.println("LOGOUT#");
     }
 
     public String receive() {
         String msg = input.nextLine();
         allMsg.add(msg + "\n");
         
-        if (msg.equals(ProtocolStrings.STOP)) {
+        if (msg.equals("LOGOUT#")) {
             try {
                 socket.close();
             } catch (IOException ex) {

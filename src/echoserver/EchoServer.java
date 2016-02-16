@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.ProtocolStrings;
+
 
 
 public class EchoServer {
@@ -21,7 +21,7 @@ public class EchoServer {
     private static ServerSocket serverSocket;
     private String ip;
     private int port;
-    ArrayList<String> specificReceivers;
+    private ArrayList<String> specificReceivers;
     public static HashMap<String, EchoClientHandler> users = new HashMap<>();
     
     public static ArrayList<EchoClientHandler> clientHandlers = new ArrayList();

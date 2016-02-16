@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.ProtocolStrings;
+
 
 /**
  *
@@ -24,21 +24,20 @@ import shared.ProtocolStrings;
 public class EchoClientHandler implements Runnable
 {
 
-    Socket socket;
-    String message;
-    EchoServer ser = new EchoServer();
-    Scanner input;
-    PrintWriter writer;
-    String[] selectedUsers;
+    private Socket socket;
+    private String message;
+    private EchoServer ser = new EchoServer();
+    private Scanner input;
+    private PrintWriter writer;
+    private String[] selectedUsers;
 
-    String start;
-    String middle;
-    String end;
-    String userName;
+    private String start;
+    private String middle;
+    private String end;
+    private String userName;
 
     public void checkMsgProtocol(String message)
     {
-
         start = "";
         middle = "";
         end = "";
@@ -59,14 +58,12 @@ public class EchoClientHandler implements Runnable
                 String[] bob = middle.split(",");
                 sendMsgToSpecific(bob, end);
             }
-
         }
         else if (start.equals("LOGOUT"))
         {
             killThisClient(userName);
             writer.println("Goodbye");
         }
-
     }
 
     //splits the message received
@@ -187,14 +184,14 @@ public class EchoClientHandler implements Runnable
 
             System.out.println("ClientHandler: " + message);
             System.out.println(String.format("Received the message: %1$S ", message));
-            while (!message.equals(ProtocolStrings.STOP))
+            while (!message.equals("LOGOUT#"))
             {
                 checkMsgProtocol(message);            //Her tjekker vi hvem der skal have beskeden og sender den også
 
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
             }
-            writer.println(ProtocolStrings.STOP);//Echo the stop message back to the client for a nice closedown
+            writer.println("LOGOUT#");//Echo the stop message back to the client for a nice closedown
             EchoServer.clientHandlers.remove(this);
             socket.close();
             System.out.println("Closed a Connection");
