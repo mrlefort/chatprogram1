@@ -200,8 +200,12 @@ public class EchoClientHandler implements Runnable
                 message = input.nextLine(); //IMPORTANT blocking call
             }
 
-            killThisClient(userName);
-            System.out.println("Closed a Connection");
+            if (message.equals("LOGOUT#"))
+            {
+                System.out.println("Jeg har fået logout");
+                killThisClient(userName);
+            }
+            
         }
         catch (IOException | NoSuchElementException ex)
         {
