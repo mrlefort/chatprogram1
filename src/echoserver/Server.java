@@ -28,6 +28,7 @@ public class Server
     public Server()
     {
         users = new HashMap<>();
+    
     }
 
     public HashMap getUsers()
@@ -90,8 +91,10 @@ public class Server
                 cl1.start();
                 System.out.println("Der er følgende forbundet: " + clientHandlers.toString());
 
-            } while (keepRunning);
-        } catch (IOException ex)
+            }
+            while (keepRunning);
+        }
+        catch (IOException ex)
         {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,16 +102,48 @@ public class Server
 
     public static void main(String[] args)
     {
-        String ip = "100.119.138.147";
+        String ip = "localhost";
         int port = 9999;
         try
         {
             Log.setLogFile("logFile.txt", "ServerLog");   //Start the server here 
             new Server().runServer(ip, port);
-        } finally
+        }
+        finally
         {
             Log.closeLogger();
         }
     }
 
+    public void sendMessage(String besked, ArrayList<String> recipients)
+    {
+        System.out.println("her i servers sendMessage, para=" + besked + " og " + recipients);
+        //Denne metode tager den besked der skal sendes, (argumentet besked) samt en arrayList med alle de navne den skal ud til.
+
+        if (recipients.size() == 1 && !recipients.get(0).equals("*"))
+        {
+            System.out.println("arrayTjek " + recipients.toString());
+            ClientHandler ch = users.get(recipients.get(0));
+            ch.message(besked);
+        }
+        else if (recipients.size() == 1 && recipients.get(0).equals("*"))
+        {
+            System.out.println("her er field 0 i array: " + recipients.get(0));
+            for (ClientHandler ch : users.values())
+            {
+                ch.message(besked);
+            }
+        }
+        else
+        {
+            for (String recipient : recipients)
+            {
+                ClientHandler ch = users.get(recipient);
+                ch.message(besked);
+
+            }
+
+        }
+
+    }
 }

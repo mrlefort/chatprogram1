@@ -6,7 +6,9 @@
 package echoclient;
 
 import echoserver.Server;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,14 +32,17 @@ public class ClientHandler implements Runnable
     private boolean pendingUserName;
     private Server ser;
     private String userName;
+    private BufferedReader in;
+    private Scanner scan;
 
     public ClientHandler(Socket socket, Server ser) throws IOException
     {
         this.socket = socket;
         pendingUserName = true;
         this.ser = ser;
-        input = new Scanner(socket.getInputStream());
         writer = new PrintWriter(socket.getOutputStream(), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
     }
 
     public void stopClient()
@@ -50,10 +55,71 @@ public class ClientHandler implements Runnable
             socket.close();
 
             System.out.println("Jeg er lukket" + socket.isClosed());
-        } catch (IOException ex)
+        }
+        catch (IOException ex)
         {
             System.err.println("JEG HAR FANGET EX I STOP CLIENT");
         }
+    }
+
+    public synchronized void chat()
+    {
+        try
+        {
+            System.out.println("Jeg er i chat()");
+            String inMsg = in.readLine();
+            System.out.println("inMSG er: " + inMsg);
+            String first = "";
+            String middle = "";
+            String last = "";
+            scan = new Scanner(inMsg);
+            scan.useDelimiter("#");
+            while (scan.hasNext())
+            {
+                first = scan.next();
+                if (!first.equals("LOGOFF"))
+                {
+                    middle = scan.next();
+                    last = scan.next();
+                }
+                switch (first)
+                {
+                    case "LOGOFF":
+                        System.out.println("jeg er i logoff switch");
+                        stopClient();
+                        break;
+                    case "SEND":
+                        System.out.println("JEG ER I MSG SWITCH");
+                        ser.sendMessage(last, msgRecipients(middle));
+                        break;
+                }
+            }
+        }
+        catch (IOException e)
+        {
+
+        }
+    }
+
+    public void message(String message)
+    {
+        writer.println(message);
+    }
+
+    public ArrayList<String> msgRecipients(String middle)
+    {
+        System.out.println("LIGE INDE I MSGRECI");
+        ArrayList recipients = new ArrayList();
+        scan = new Scanner(middle);
+        scan.useDelimiter(",");
+        String names;
+        while (scan.hasNext())
+        {
+            names = scan.next();
+            recipients.add(names);
+        }
+        System.out.println("præ returns");
+        return recipients;
     }
 
     public void sendMessage(String message)
@@ -72,9 +138,48 @@ public class ClientHandler implements Runnable
         writer.println(list);
     }
 
+    public String getUserName()
+    {
+        return userName;
+    }
+
     @Override
     public void run()
     {
+        try
+        {
+
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            while (pendingUserName)
+            {
+//                out.println("Please enter a username like this: USER#'your_name'");
+                String nameInput = in.readLine();
+                input = new Scanner(nameInput);
+                input.useDelimiter("#");
+
+                while (input.hasNext())
+                {
+                    String a = input.next();
+                    if (a.equals("USER"))
+                    {
+                        userName = input.next();
+                        ser.addUser(userName, this);
+                        ser.userList();
+                        pendingUserName = false;
+                    }
+                }
+            }
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        while (!socket.isClosed())
+        {
+            chat();
+        }
+    }
 //        try
 //        {
 //            input = new Scanner(socket.getInputStream());
@@ -98,7 +203,6 @@ public class ClientHandler implements Runnable
 //        {
 //            Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-    }
 
     //    public void checkMsgProtocol(String message)
 //    {
