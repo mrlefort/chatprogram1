@@ -10,6 +10,7 @@ import static echoserver.EchoServer.clientHandlers;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,24 +24,40 @@ public class ClientHandler implements Runnable {
 
     Socket socket;
     String message;
+    EchoServer ser = new EchoServer();
     Scanner input;
     PrintWriter writer;
-    
+    ArrayList<String> specificReceivers;    
 
-    public void checkMsgProtocol(){
+    public void checkMsgProtocol(String message){
+        if (selectedUsers.size() != 0){
+            sendMsgToSpecific(message);
+        } else {
+            sendMessageToAll(message);
+        
+        }
         //feks. switch til at finde ud af hvilken protocolString det er.
         //denne metode kan passende kalde sendMsgToSpecific(): 
         //kan også passende kalde sendMessageToAll();
     }
     
-    public void sendMsgToSpecific(){
-        //kode til at sende til specific person
+    public void sendMsgToSpecific(String message){
+        specificReceivers = new ArrayList();
+        for (int i = 0; i < selectedUsers.size(); i++) {
+            for (int j = 0; j < ser.users.size(); j++) {
+                if (selectedUsers[i].equals(ser.users[j])){
+                    specificReceivers.add(selectedUsers[i]);
+                    
+                }
+            }
+        }
+        sendMessage("SEND#" + specificReceivers + "#" + message);
     }
     
     static public void sendMessageToAll(String messageToAll){
-        //der skal nok en form for switch ind her, så man kan bestemme hvem man vil skrive til.
+        
         for (ClientHandler ch : clientHandlers) {
-            ch.sendMessage(messageToAll);
+            ch.sendMessage("SEND#*" + messageToAll);
         }
     }
     
@@ -64,7 +81,7 @@ public class ClientHandler implements Runnable {
             System.out.println("ClientHandler: " + message);
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                sendMessageToAll(message);             //Her bliver beskeden sendt ud til ALLE klienter.
+                checkMsgProtocol(message);             //Her bliver beskeden sendt ud til ALLE klienter.
                 
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call

@@ -66,6 +66,9 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
 
         jTextField1.setText("jTextField1");
 
+        StringIp.setText("13.70.194.148");
+
+        port.setText("9999");
         port.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portActionPerformed(evt);
