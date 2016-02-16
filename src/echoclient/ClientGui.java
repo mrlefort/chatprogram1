@@ -258,7 +258,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
 
             /// doo code here for when users are selected..
             c.send(mysendstring);
-            
+
             besked.setText("");
             besked.requestFocus();
 
@@ -308,7 +308,8 @@ public class ClientGui extends javax.swing.JFrame implements Observer
 
     private void logout()
     {
-        System.out.println("Logging out...");
+        c.send("LOGOUT#");
+        super.dispose();
     }
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed

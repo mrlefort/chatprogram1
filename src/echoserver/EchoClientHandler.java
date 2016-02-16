@@ -51,18 +51,19 @@ public class EchoClientHandler implements Runnable
         {
             if (middle.equals("*"))
             {
-                sendMessageToAll(end);
+                String a = "MESSAGE#" + this.userName + "#" + end;
+                sendMessageToAll(a);
             }
             else
             {
                 String[] bob = middle.split(",");
-                sendMsgToSpecific(bob, end);
+                String a = "MESSAGE#" + this.userName + "#" + end;
+                sendMsgToSpecific(bob, a);
             }
         }
         else if (start.equals("LOGOUT"))
         {
-            killThisClient(userName);
-            writer.println("Goodbye");
+            killThisClient(userName); 
         }
     }
 
@@ -96,6 +97,7 @@ public class EchoClientHandler implements Runnable
         {
             EchoServer.users.remove(userName);
             userList();
+            writer.println("LOGOUT#");
             socket.close();
             System.out.println("Jeg er lukket = " + socket.isClosed());
         }
@@ -123,11 +125,10 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessageToAll(String message)
     {
-
-        for (EchoClientHandler ch : clientHandlers)
-        {               //skal skiftes fra min arrayliste til vores hashmap.
-
-            ch.sendMessage(end);
+        for (EchoClientHandler ch : EchoServer.users.values())
+        {               
+            
+            ch.sendMessage(message);
 
         }
 
@@ -163,7 +164,7 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessage(String message)
     {
-        writer.println(message.toUpperCase());
+        writer.println(message);
 
     }
 

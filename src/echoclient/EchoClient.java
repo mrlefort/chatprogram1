@@ -37,9 +37,9 @@ public class EchoClient extends Observable implements Runnable {
         
     }
 
-    public void stop() throws IOException {
-        output.println("LOGOUT#");
-    }
+//    public void stop() throws IOException {
+//        output.println("LOGOUT#");
+//    }
 
     public String receive() {
         String msg = input.nextLine();
