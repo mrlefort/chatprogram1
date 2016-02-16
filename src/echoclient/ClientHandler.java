@@ -27,54 +27,81 @@ public class ClientHandler implements Runnable {
     EchoServer ser = new EchoServer();
     Scanner input;
     PrintWriter writer;
-    ArrayList<String> specificReceivers;
-    String[] selectedUsers;    
+    
+    String[] selectedUsers;
+    
+    String start = "";
+    String middle = "";
+    String end = "";
+    
+    
 
-    public void checkMsgProtocol(String message){
-        if (selectedUsers.length != 0){
+    public void checkMsgProtocol(String message) {
+        splitMessageFirst(message);
+        
+        if (start.equals("SEND")){
+            if (middle.equals("*")) {
+                sendMessageToAll(message);
+            }
             sendMsgToSpecific(message);
-        } else {
-            sendMessageToAll(message);
         
         }
-        //feks. switch til at finde ud af hvilken protocolString det er.
-        //denne metode kan passende kalde sendMsgToSpecific(): 
-        //kan også passende kalde sendMessageToAll();
+
+
+        
     }
     
-    public void sendMsgToSpecific(String message){
+    //splits the message received
+    public void splitMessageFirst(String message){
+        String[] splitTheMessage = message.split("#");
+        start = splitTheMessage[0];
+        middle = splitTheMessage[1];
+        end = splitTheMessage[2];
+    }
+    
+    
+    
+        public void sendMsgToSpecific(String message){
+        String[] splitReceivers = middle.split(",");
+        ArrayList<ClientHandler> specificReceivers = new ArrayList();
         
-        specificReceivers = new ArrayList();
-        for (int i = 0; i < selectedUsers.length; i++) {
-            for (int j = 0; j < ser.users.size(); j++) {
-                if (selectedUsers[i].equals(ser.users[j])){
-                    specificReceivers.add(selectedUsers[i]);
+
+        for (int i = 0; i < splitReceivers.length; i++) {
+            for (int j = 0; j < EchoServer.clientHandlers.size(); j++) {           //skal skiftes fra min arrayliste til vores hashmap.
+                if (splitReceivers[i].equals(EchoServer.clientHandlers.get(j))){   //skal skiftes fra min arrayliste til vores hashmap.
+                    specificReceivers.add(EchoServer.clientHandlers.get(j));
                     
                 }
             }
         }
-        sendMessage("SEND#" + specificReceivers + "#" + message);
-    }
-    
-    static public void sendMessageToAll(String messageToAll){
         
-        for (ClientHandler ch : clientHandlers) {
-            ch.sendMessage("SEND#*" + messageToAll);
-        }
+            for (ClientHandler specificReceiver : specificReceivers) {
+                specificReceiver.sendMessage(end);
+            }
+        
     }
-    
-    
+
+    public void sendMessageToAll(String message) {
+        
+        for (ClientHandler ch : clientHandlers) {               //skal skiftes fra min arrayliste til vores hashmap.
+
+            ch.sendMessage(end);
+        
+        }
+        
+    }
+
     public ClientHandler(Socket socket) {
         this.socket = socket;
     }
 
     public void sendMessage(String message) {
         writer.println(message.toUpperCase());
-        
+
     }
-        public void selectedusers(String[] stringarray)
-    {
-      this.selectedUsers = stringarray;  
+
+    public void selectedusers(String[] stringarray) {
+        this.selectedUsers = stringarray;
     }
 
     @Override
@@ -87,8 +114,8 @@ public class ClientHandler implements Runnable {
             System.out.println("ClientHandler: " + message);
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
-                checkMsgProtocol(message);             //Her bliver beskeden sendt ud til ALLE klienter.
-                
+                checkMsgProtocol(message);            //Her tjekker vi hvem der skal have beskeden og sender den også
+
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
             }

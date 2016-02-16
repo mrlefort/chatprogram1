@@ -20,9 +20,12 @@ public class EchoServer {
     private static ServerSocket serverSocket;
     private String ip;
     private int port;
+    ArrayList<String> specificReceivers;
     
     
     public static ArrayList<ClientHandler> clientHandlers = new ArrayList();
+    
+    
     //hasmap som der har socket og brugernavn som key & value, til at finde ud af hvem man skal skrive til.
     //dvs dette her skal laves om til hashmap som logger deres socket og navne.
     
@@ -32,7 +35,10 @@ public class EchoServer {
     }
 
    
-   
+    
+    
+    
+    
     
     
 

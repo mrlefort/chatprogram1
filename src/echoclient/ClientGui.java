@@ -6,6 +6,8 @@
 package echoclient;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
@@ -198,9 +200,11 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
 
     String[] stringarray = new String[selectedIx.length];
     
+    
     for (int i = 0; i < selectedIx.length; i++) {
   //      sel = jList1.getModel().getElementAt(selectedIx[i]);
         stringarray[i] = listofusers.getModel().getElementAt(selectedIx[i]);
+        
     }
     
         for(int o = 0; o<stringarray.length; o++)
@@ -208,14 +212,16 @@ public class ClientGui extends javax.swing.JFrame implements Observer{
         System.out.println(stringarray[o]);
     }
     /// doo code here for when users are selected..
+        c.send("SEND#" + Arrays.toString(stringarray) + "#" + besked.getText());
+       
     
-    
+        
         }
         else
         {
-    
+            
    // send to all!
-        c.send(besked.getText());
+        c.send("SEND#*#" + besked.getText());
         }
         
     }//GEN-LAST:event_sendButtonActionPerformed

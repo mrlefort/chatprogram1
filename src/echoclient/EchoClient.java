@@ -44,7 +44,7 @@ public class EchoClient extends Observable implements Runnable {
     public String receive() {
         String msg = input.nextLine();
         allMsg.add(msg + "\n");
-        //skal noget kode, måske en switch, ind her så den "kører" protocollen og skriver til dem den skal.
+        
         if (msg.equals(ProtocolStrings.STOP)) {
             try {
                 socket.close();
