@@ -29,7 +29,7 @@ public class Server
     {
         users = new HashMap<>();
     }
-    
+
     public HashMap getUsers()
     {
         return users;
@@ -62,7 +62,12 @@ public class Server
         {
             ch.sendUserList(onlineMsg);
         }
-//        out.println("USERLIST#" + clients.toString());
+
+    }
+
+    public void stopUser(String userName, ClientHandler ch)
+    {
+        users.remove(userName, ch);
     }
 
     private void runServer(String ip, int port)

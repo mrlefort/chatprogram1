@@ -14,7 +14,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  *
  * @author Steffen
@@ -39,6 +38,22 @@ public class ClientHandler implements Runnable
         this.ser = ser;
         input = new Scanner(socket.getInputStream());
         writer = new PrintWriter(socket.getOutputStream(), true);
+    }
+
+    public void stopClient()
+    {
+        try
+        {
+            ser.stopUser(userName, this);
+            ser.userList();
+            System.out.println("jeg er ikke lukket endnu");
+            socket.close();
+
+            System.out.println("Jeg er lukket" + socket.isClosed());
+        } catch (IOException ex)
+        {
+            System.err.println("JEG HAR FANGET EX I STOP CLIENT");
+        }
     }
 
     public void sendMessage(String message)
