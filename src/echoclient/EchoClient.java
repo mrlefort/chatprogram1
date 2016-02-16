@@ -30,13 +30,14 @@ public class EchoClient extends Observable implements Runnable
         socket = new Socket(serverAddress, port);
         input = new Scanner(socket.getInputStream());
         output = new PrintWriter(socket.getOutputStream(), true);  //Set to true, to get auto flush behaviour
+        System.out.println("Connected");
     }
 
     public void send(String msg)
     {
         System.out.println("Send method: " + msg);
+        System.out.println("output er: " + output.toString());
         output.println(msg);
-
     }
 
 //    public void stop() throws IOException {

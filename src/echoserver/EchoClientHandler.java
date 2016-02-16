@@ -65,6 +65,7 @@ public class EchoClientHandler implements Runnable
         }
         else if (start.equals("LOGOUT"))
         {
+            System.out.println("Der kommer logout");
             killThisClient(userName);
         }
     }
@@ -98,8 +99,9 @@ public class EchoClientHandler implements Runnable
         try
         {
             EchoServer.users.remove(userName);
+            EchoServer.clientHandlers.remove(this);
             userList();
-            writer.println("LOGOUT#");
+//            writer.println("LOGOUT#");
             socket.close();
             System.out.println("Jeg er lukket = " + socket.isClosed());
         }
@@ -130,7 +132,7 @@ public class EchoClientHandler implements Runnable
         System.out.println("her er besked i all: " + message);
         for (EchoClientHandler ch : EchoServer.clientHandlers)
         {
-            
+
             System.out.println("Her er user: " + ch.userName);
 
             ch.sendMessage(message);
@@ -197,9 +199,8 @@ public class EchoClientHandler implements Runnable
                 System.out.println(String.format("Received the message: %1$S ", message.toUpperCase()));
                 message = input.nextLine(); //IMPORTANT blocking call
             }
-            writer.println("LOGOUT#");//Echo the stop message back to the client for a nice closedown
-            EchoServer.clientHandlers.remove(this);
-            socket.close();
+
+            killThisClient(userName);
             System.out.println("Closed a Connection");
         }
         catch (IOException | NoSuchElementException ex)

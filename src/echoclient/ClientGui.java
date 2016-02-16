@@ -291,18 +291,23 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         try
         {
+            String navn = username.getText();
             c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()));
             Thread client = new Thread(c);
             client.start();
-            System.out.println("her er usrName:" + username.getText());
-            usernamelabel.setText(username.getText());
+            System.out.println("her er usrName:" + navn);
+            usernamelabel.setText(navn);
             c.addObserver(this);
+            client.sleep(1000);
+            System.out.println("her er c: " + c.toString() + navn);
+            c.send("USER#" + navn);
         }
-        catch (IOException ex)
+        catch (IOException | InterruptedException ex)
         {
             Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-        c.send("USER#" + username.getText());
+
+
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -315,6 +320,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     private void logout()
     {
         c.send("LOGOUT#");
+        
         super.dispose();
     }
 
