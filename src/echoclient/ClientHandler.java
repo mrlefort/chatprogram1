@@ -27,10 +27,11 @@ public class ClientHandler implements Runnable {
     EchoServer ser = new EchoServer();
     Scanner input;
     PrintWriter writer;
-    ArrayList<String> specificReceivers;    
+    ArrayList<String> specificReceivers;
+    String[] selectedUsers;    
 
     public void checkMsgProtocol(String message){
-        if (selectedUsers.size() != 0){
+        if (selectedUsers.length != 0){
             sendMsgToSpecific(message);
         } else {
             sendMessageToAll(message);
@@ -42,8 +43,9 @@ public class ClientHandler implements Runnable {
     }
     
     public void sendMsgToSpecific(String message){
+        
         specificReceivers = new ArrayList();
-        for (int i = 0; i < selectedUsers.size(); i++) {
+        for (int i = 0; i < selectedUsers.length; i++) {
             for (int j = 0; j < ser.users.size(); j++) {
                 if (selectedUsers[i].equals(ser.users[j])){
                     specificReceivers.add(selectedUsers[i]);
@@ -69,6 +71,10 @@ public class ClientHandler implements Runnable {
     public void sendMessage(String message) {
         writer.println(message.toUpperCase());
         
+    }
+        public void selectedusers(String[] stringarray)
+    {
+      this.selectedUsers = stringarray;  
     }
 
     @Override
