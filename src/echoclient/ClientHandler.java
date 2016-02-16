@@ -35,6 +35,7 @@ public class ClientHandler implements Runnable {
     String end;
 
     public void checkMsgProtocol(String message) {
+
         start = "";
         middle = "";
         end = "";
@@ -44,9 +45,9 @@ public class ClientHandler implements Runnable {
             //acknowledge the user and add him to hasmap plus start socket connection
         } else if (start.equals("SEND")) {
             if (middle.equals("*")) {
-                sendMessageToAll(message);
+                sendMessageToAll(end);
             }
-            sendMsgToSpecific(message);
+            sendMsgToSpecific(end);
 
         } else if (start.equals("LOGOUT")) {
             //log the user out
@@ -60,6 +61,7 @@ public class ClientHandler implements Runnable {
         start = splitTheMessage[0];
         middle = splitTheMessage[1];
         end = splitTheMessage[2];
+
     }
 
     public void sendMsgToSpecific(String message) {
@@ -112,6 +114,7 @@ public class ClientHandler implements Runnable {
             writer = new PrintWriter(socket.getOutputStream(), true);
 
             message = input.nextLine(); //IMPORTANT blocking call
+            
             System.out.println("ClientHandler: " + message);
             System.out.println(String.format("Received the message: %1$S ", message));
             while (!message.equals(ProtocolStrings.STOP)) {
