@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package echoserver;
 
 import static echoserver.EchoServer.clientHandlers;
@@ -29,7 +24,6 @@ public class EchoClientHandler implements Runnable
     private Scanner input;
     private PrintWriter writer;
     private String[] selectedUsers;
-
     private String start;
     private String middle;
     private String end;
@@ -44,26 +38,22 @@ public class EchoClientHandler implements Runnable
 
         if (start.equals("USER"))
         {
-            System.out.println("I USER middle er : " + middle);
+
             addUser(middle);
-        }
-        else if (start.equals("SEND"))
+        } else if (start.equals("SEND"))
         {
             if (middle.equals("*"))
             {
-                System.out.println("vi sender til * " + end);
-                System.out.println("Vores navn er:" + userName);
+
                 String a = "MESSAGE#" + this.userName + "#" + end;
                 sendMessageToAll(a);
-            }
-            else
+            } else
             {
                 String[] bob = middle.split(",");
                 String b = "MESSAGE#" + this.userName + "#" + end;
                 sendMsgToSpecific(bob, b);
             }
-        }
-        else if (start.equals("LOGOUT"))
+        } else if (start.equals("LOGOUT"))
         {
             System.out.println("Der kommer logout");
             killThisClient(userName);
@@ -95,7 +85,7 @@ public class EchoClientHandler implements Runnable
 
     public void killThisClient(String userName)
     {
-        System.out.println("lukker klienten!");
+
         try
         {
             EchoServer.users.remove(userName);
@@ -103,9 +93,8 @@ public class EchoClientHandler implements Runnable
             userList();
 //            writer.println("LOGOUT#");
             socket.close();
-            System.out.println("Jeg er lukket = " + socket.isClosed());
-        }
-        catch (IOException ex)
+
+        } catch (IOException ex)
         {
             Logger.getLogger(EchoClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -129,11 +118,9 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessageToAll(String message)
     {
-        System.out.println("her er besked i all: " + message);
+
         for (EchoClientHandler ch : EchoServer.clientHandlers)
         {
-
-            System.out.println("Her er user: " + ch.userName);
 
             ch.sendMessage(message);
         }
@@ -150,7 +137,7 @@ public class EchoClientHandler implements Runnable
 
         }
         onlineMsg = onlineMsg.substring(0, onlineMsg.length() - 1);
-        System.out.println("Her er den fulde liste: " + onlineMsg);
+
         for (EchoClientHandler ch : EchoServer.users.values())
         {
             ch.sendUserList(onlineMsg);
@@ -170,7 +157,7 @@ public class EchoClientHandler implements Runnable
 
     public void sendMessage(String message)
     {
-        System.out.println("final send fra server = " + message);
+
         writer.println(message);
 
     }
@@ -205,9 +192,8 @@ public class EchoClientHandler implements Runnable
                 System.out.println("Jeg har fået logout");
                 killThisClient(userName);
             }
-            
-        }
-        catch (IOException | NoSuchElementException ex)
+
+        } catch (IOException | NoSuchElementException ex)
         {
             Logger.getLogger(EchoClientHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

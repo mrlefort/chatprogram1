@@ -14,15 +14,18 @@ import java.util.logging.Logger;
 public class EchoClient extends Observable implements Runnable
 {
 
-    Socket socket;
+    private Socket socket;
     private int port;
     private InetAddress serverAddress;
     private Scanner input;
     private PrintWriter output;
-    ArrayList<String> allMsg = new ArrayList();
-
-    String ip;
-
+    private ArrayList<String> allMsg = new ArrayList();
+    private String ip;
+    private Scanner scan;
+    private String[] splitTheMessage;
+    private String[] userArray;
+    ClientGui gui;
+    
     public void connect(String address, int port) throws UnknownHostException, IOException
     {
         this.port = port;
@@ -30,13 +33,11 @@ public class EchoClient extends Observable implements Runnable
         socket = new Socket(serverAddress, port);
         input = new Scanner(socket.getInputStream());
         output = new PrintWriter(socket.getOutputStream(), true);  //Set to true, to get auto flush behaviour
-        System.out.println("Connected");
     }
 
     public void send(String msg)
     {
-        System.out.println("Send method: " + msg);
-        System.out.println("output er: " + output.toString());
+
         output.println(msg);
     }
 
@@ -45,34 +46,46 @@ public class EchoClient extends Observable implements Runnable
 //    }
     public String receive()
     {
-     
-            String msg = input.nextLine();
-            System.out.println("Her er det vi har modtaget: " + msg);
-            allMsg.add(msg + "\n");
 
-            if (msg.equals("LOGOUT#"))
+        String msg = input.nextLine();
+        System.out.println("Her er det vi har modtaget: " + msg);
+        allMsg.add(msg + "\n");
+        splitTheMessage = msg.split("#");
+        if(splitTheMessage[0].equals("USERS"))
+        {            
+            userArray = splitTheMessage[1].split(",");
+            try
             {
-                try
-                {
-                    socket.close();
-                }
-                catch (IOException ex)
-                {
-                    Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                Thread.sleep(1000);
+            } catch (InterruptedException ex)
+            {
+                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
             }
-            setChanged();
-            System.out.println("Her er det vi har modtaget: " + msg);
-            notifyObservers(msg);
-            return msg;
-        
+            gui.popList(userArray);
+        }
+
+        if (msg.equals("LOGOUT#"))
+        {
+            try
+            {
+                socket.close();
+            } catch (IOException ex)
+            {
+                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        setChanged();
+        System.out.println("Her er det vi har modtaget: " + msg);
+        notifyObservers(msg);
+        return msg;
+
     }
 
-    public EchoClient(String ip, int port) throws IOException
+    public EchoClient(String ip, int port, ClientGui gui) throws IOException
     {
         this.port = port;
         this.ip = ip;
-        
+        this.gui = gui;
     }
 
     @Override
@@ -81,8 +94,7 @@ public class EchoClient extends Observable implements Runnable
         try
         {
             connect(ip, port);
-        }
-        catch (IOException ex)
+        } catch (IOException ex)
         {
             Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,5 +104,10 @@ public class EchoClient extends Observable implements Runnable
             receive();
 
         }
+    }
+    
+    public String[] getUserArray()
+    {
+        return userArray;
     }
 }
