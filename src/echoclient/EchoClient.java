@@ -11,23 +11,48 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class EchoClient extends Observable implements Runnable
-{
+public class EchoClient extends Observable implements Runnable {
 
     private Socket socket;
     private int port;
     private InetAddress serverAddress;
     private Scanner input;
     private PrintWriter output;
-    private ArrayList<String> allMsg = new ArrayList();
+
+    ArrayList<String> allMsg = new ArrayList();
+
     private String ip;
     private Scanner scan;
     private String[] splitTheMessage;
     private String[] userArray;
     ClientGui gui;
-    
-    public void connect(String address, int port) throws UnknownHostException, IOException
-    {
+
+    private String start;
+    private String middle;
+    private String end;
+    private String userName = "";
+    String toShow;
+
+    //figures out what to send back to the clientGui
+    public void checkMsgProtocol(String message) {
+        start = "";
+        middle = "";
+        end = "";
+        splitMessageFirst(message);
+
+        switch (start) {
+            case "USERS":
+                toShow = "People connected: " + middle;
+                break;
+            case "MESSAGE":
+                toShow = middle + ": " + end;
+                break;
+
+        }
+
+    }
+
+    public void connect(String address, int port) throws UnknownHostException, IOException {
         this.port = port;
         serverAddress = InetAddress.getByName(address);
         socket = new Socket(serverAddress, port);
@@ -35,8 +60,7 @@ public class EchoClient extends Observable implements Runnable
         output = new PrintWriter(socket.getOutputStream(), true);  //Set to true, to get auto flush behaviour
     }
 
-    public void send(String msg)
-    {
+    public void send(String msg) {
 
         output.println(msg);
     }
@@ -44,70 +68,85 @@ public class EchoClient extends Observable implements Runnable
 //    public void stop() throws IOException {
 //        output.println("LOGOUT#");
 //    }
-    public String receive()
-    {
+    public String receive() {
 
         String msg = input.nextLine();
-        System.out.println("Her er det vi har modtaget: " + msg);
-        allMsg.add(msg + "\n");
+        String msg2 = msg;
+
+        if (msg.equals("LOGOUT#")) {
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
         splitTheMessage = msg.split("#");
-        if(splitTheMessage[0].equals("USERS"))
-        {            
+        if (splitTheMessage[0].equals("USERS")) {
             userArray = splitTheMessage[1].split(",");
-            try
-            {
+            try {
                 Thread.sleep(1000);
-            } catch (InterruptedException ex)
-            {
+            } catch (InterruptedException ex) {
                 Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
             }
             gui.popList(userArray);
         }
 
-        if (msg.equals("LOGOUT#"))
-        {
-            try
-            {
-                socket.close();
-            } catch (IOException ex)
-            {
-                Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        setChanged();
+        checkMsgProtocol(msg2);
+
         System.out.println("Her er det vi har modtaget: " + msg);
-        notifyObservers(msg);
+        System.out.println("Her er det vi skriver: " + toShow);
+        allMsg.add(toShow + "\n");
+
+        setChanged();
+        System.out.println("Her er det vi har modtaget: " + toShow);
+        notifyObservers(toShow);
         return msg;
 
     }
 
-    public EchoClient(String ip, int port, ClientGui gui) throws IOException
-    {
+    public EchoClient(String ip, int port, ClientGui gui) throws IOException {
         this.port = port;
         this.ip = ip;
         this.gui = gui;
     }
 
+    //splits the message received
+    public void splitMessageFirst(String message) {
+        String[] splitTheMessage = message.split("#");
+
+        switch (splitTheMessage.length) {
+            case 1:
+                start = splitTheMessage[0];
+                break;
+            case 2:
+                start = splitTheMessage[0];
+                middle = splitTheMessage[1];
+                break;
+            default:
+                start = splitTheMessage[0];
+                middle = splitTheMessage[1];
+                end = splitTheMessage[2];
+                break;
+        }
+
+    }
+
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             connect(ip, port);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-        while (true)
-        {
+        while (true) {
             System.out.println("RDY TO RECIEVE");
             receive();
 
         }
     }
-    
-    public String[] getUserArray()
-    {
+
+    public String[] getUserArray() {
         return userArray;
     }
 }
