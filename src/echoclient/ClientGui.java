@@ -35,6 +35,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
         initComponents();
         username.requestFocus();
         isLoggedIn = false;
+        listModel = new DefaultListModel();
 
     }
 
