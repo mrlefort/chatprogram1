@@ -331,7 +331,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
                 System.out.println("her er c: " + c.toString() + navn);
                 c.send("USER#" + navn);
                 isLoggedIn = true;
-                popList(c.getUserArray());
+//                popList(c.getUserArray());
 
                 isConnected = true;
             } catch (IOException | InterruptedException ex)
