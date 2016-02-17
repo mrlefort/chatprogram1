@@ -22,6 +22,38 @@ public class EchoClient extends Observable implements Runnable
     ArrayList<String> allMsg = new ArrayList();
 
     String ip;
+    
+    
+    
+    private String start;
+    private String middle;
+    private String end;
+    private String userName = "";
+    String toShow;
+
+    
+    //figures out what to send back to the clientGui
+    public void checkMsgProtocol(String message)
+    {
+        start = "";
+        middle = "";
+        end = "";
+        splitMessageFirst(message);
+        
+        
+
+        switch (start) {
+            case "USERS":
+                toShow =  "People connected: " + middle;
+                break;
+            case "MESSAGE":
+                toShow = middle + ": " + end;
+                break;
+            
+        }
+
+    }
+
 
     public void connect(String address, int port) throws UnknownHostException, IOException
     {
@@ -45,11 +77,10 @@ public class EchoClient extends Observable implements Runnable
 //    }
     public String receive()
     {
-     
+            
             String msg = input.nextLine();
-            System.out.println("Her er det vi har modtaget: " + msg);
-            allMsg.add(msg + "\n");
-
+            String msg2 = msg;
+            
             if (msg.equals("LOGOUT#"))
             {
                 try
@@ -61,9 +92,17 @@ public class EchoClient extends Observable implements Runnable
                     Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            setChanged();
+
+            checkMsgProtocol(msg2);
+            
             System.out.println("Her er det vi har modtaget: " + msg);
-            notifyObservers(msg);
+            System.out.println("Her er det vi skriver: " + toShow);
+            allMsg.add(toShow + "\n");
+
+            
+            setChanged();
+            System.out.println("Her er det vi har modtaget: " + toShow);
+            notifyObservers(toShow);
             return msg;
         
     }
@@ -74,6 +113,32 @@ public class EchoClient extends Observable implements Runnable
         this.ip = ip;
         
     }
+    
+    
+    
+        //splits the message received
+    public void splitMessageFirst(String message)
+    {
+        String[] splitTheMessage = message.split("#");
+
+        switch (splitTheMessage.length)
+        {
+            case 1:
+                start = splitTheMessage[0];
+                break;
+            case 2:
+                start = splitTheMessage[0];
+                middle = splitTheMessage[1];
+                break;
+            default:
+                start = splitTheMessage[0];
+                middle = splitTheMessage[1];
+                end = splitTheMessage[2];
+                break;
+        }
+
+    }
+    
 
     @Override
     public void run()
