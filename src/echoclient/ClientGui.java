@@ -12,6 +12,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -25,12 +26,15 @@ public class ClientGui extends javax.swing.JFrame implements Observer
      * Creates new form Gui
      */
     EchoClient c;
+    DefaultListModel listModel;
+    boolean isLoggedIn;
 
     public ClientGui()
     {
 
         initComponents();
         username.requestFocus();
+        isLoggedIn = false;
 
     }
 
@@ -232,51 +236,68 @@ public class ClientGui extends javax.swing.JFrame implements Observer
 
     private void send()
     {
-        if (besked.getText().length() != 0)
+        if (isLoggedIn)
         {
-
-            if (!listofusers.isSelectionEmpty())
+            if (besked.getText().length() != 0)
             {
 
-                Object sel = null;
-
-                int[] selectedIx = this.listofusers.getSelectedIndices();
-
-                String[] stringarray = new String[selectedIx.length];
-
-                for (int i = 0; i < selectedIx.length; i++)
+                if (!listofusers.isSelectionEmpty())
                 {
-                    //      sel = jList1.getModel().getElementAt(selectedIx[i]);
-                    stringarray[i] = listofusers.getModel().getElementAt(selectedIx[i]);
 
-                }
+                    Object sel = null;
 
-                String mysendstring = "";
-                for (int o = 0; o < stringarray.length; o++)
+                    int[] selectedIx = this.listofusers.getSelectedIndices();
+
+                    String[] stringarray = new String[selectedIx.length];
+
+                    for (int i = 0; i < selectedIx.length; i++)
+                    {
+                        //      sel = jList1.getModel().getElementAt(selectedIx[i]);
+                        stringarray[i] = listofusers.getModel().getElementAt(selectedIx[i]);
+
+                    }
+
+                    String mysendstring = "";
+                    for (int o = 0; o < stringarray.length; o++)
+                    {
+                        mysendstring = mysendstring + stringarray[o] + ",";
+                    }
+
+                    mysendstring = mysendstring.substring(0, mysendstring.length() - 1);
+
+                    /// doo code here for when users are selected..
+                    c.send("SEND#" + mysendstring + "#" + besked.getText());
+
+                    besked.setText("");
+                    besked.requestFocus();
+
+                } else
                 {
-                    mysendstring = mysendstring + stringarray[o] + ",";
+
+                    // send to all!
+                    c.send("SEND#*#" + besked.getText());
+                    besked.setText("");
+                    besked.requestFocus();
                 }
-
-                mysendstring = mysendstring.substring(0, mysendstring.length() - 1);
-
-                /// doo code here for when users are selected..
-                c.send("SEND#" + mysendstring + "#" + besked.getText());
-
-                besked.setText("");
-                besked.requestFocus();
-
-            }
-            else
-            {
-
-                // send to all!
-                c.send("SEND#*#" + besked.getText());
-                besked.setText("");
-                besked.requestFocus();
             }
         }
     }
 
+    public void popList(String[] userNames)
+    {
+
+        listModel.clear();
+
+        for (String userName : userNames)
+        {
+            listModel.addElement(userName);
+        }
+
+        listofusers.setModel(listModel);
+        listofusers.validate();
+        listofusers.updateUI();
+
+    }
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
 
@@ -292,21 +313,23 @@ public class ClientGui extends javax.swing.JFrame implements Observer
         try
         {
             String navn = username.getText();
-            c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()));
+            c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()), this);
             Thread client = new Thread(c);
             client.start();
             System.out.println("her er usrName:" + navn);
             usernamelabel.setText(navn);
             c.addObserver(this);
+
             client.sleep(1000);
             System.out.println("her er c: " + c.toString() + navn);
             c.send("USER#" + navn);
-        }
-        catch (IOException | InterruptedException ex)
+            isLoggedIn = true;
+            popList(c.getUserArray());
+            connectButton.setEnabled(false);
+        } catch (IOException | InterruptedException ex)
         {
             Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
         }
-
 
     }//GEN-LAST:event_connectButtonActionPerformed
 
@@ -320,7 +343,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     private void logout()
     {
         c.send("LOGOUT#");
-        
+
         super.dispose();
     }
 
@@ -371,20 +394,16 @@ public class ClientGui extends javax.swing.JFrame implements Observer
                     break;
                 }
             }
-        }
-        catch (ClassNotFoundException ex)
+        } catch (ClassNotFoundException ex)
         {
             java.util.logging.Logger.getLogger(ClientGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (InstantiationException ex)
+        } catch (InstantiationException ex)
         {
             java.util.logging.Logger.getLogger(ClientGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (IllegalAccessException ex)
+        } catch (IllegalAccessException ex)
         {
             java.util.logging.Logger.getLogger(ClientGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        catch (javax.swing.UnsupportedLookAndFeelException ex)
+        } catch (javax.swing.UnsupportedLookAndFeelException ex)
         {
             java.util.logging.Logger.getLogger(ClientGui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }

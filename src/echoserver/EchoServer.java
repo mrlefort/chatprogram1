@@ -12,9 +12,8 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
-public class EchoServer {
+public class EchoServer
+{
 
     private static boolean keepRunning = true;
     private static ServerSocket serverSocket;
@@ -22,48 +21,53 @@ public class EchoServer {
     private int port;
     private ArrayList<String> specificReceivers;
     public static HashMap<String, EchoClientHandler> users = new HashMap<>();
-    
     public static ArrayList<EchoClientHandler> clientHandlers = new ArrayList();
-    
-    
+
     //hasmap som der har socket og brugernavn som key & value, til at finde ud af hvem man skal skrive til.
     //dvs dette her skal laves om til hashmap som logger deres socket og navne.
-    
-
-    public static void stopServer() {
+    public static void stopServer()
+    {
         keepRunning = false;
     }
 
-    private void runServer(String ip, int port) {
+    private void runServer(String ip, int port)
+    {
         this.port = port;
         this.ip = ip;
 
         System.out.println("Sever started. Listening on: " + port + ", bound to: " + ip);
-        try {
+        try
+        {
             serverSocket = new ServerSocket();
             serverSocket.bind(new InetSocketAddress(ip, port));
-            do {
+            do
+            {
                 Socket socket = serverSocket.accept(); //Important Blocking call
                 System.out.println("Connected to a client");
                 EchoClientHandler cl = new EchoClientHandler(socket);
                 clientHandlers.add(cl);
                 Thread cl1 = new Thread(cl);
                 cl1.start();
-                
+
             } while (keepRunning);
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(EchoServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         String ip = "localhost";
         int port = 9999;
-        try {
+        try
+        {
             Log.setLogFile("logFile.txt", "ServerLog");   //Start the server here 
             new EchoServer().runServer(ip, port);
-            } finally{  
-            Log.closeLogger(); } 
+        } finally
+        {
+            Log.closeLogger();
         }
-    
+    }
+
 }
