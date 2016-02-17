@@ -65,9 +65,7 @@ public class EchoClient extends Observable implements Runnable {
         output.println(msg);
     }
 
-//    public void stop() throws IOException {
-//        output.println("LOGOUT#");
-//    }
+
     public String receive() {
 
         String msg = input.nextLine();
@@ -76,6 +74,7 @@ public class EchoClient extends Observable implements Runnable {
         if (msg.equals("LOGOUT#")) {
             try {
                 socket.close();
+                
             } catch (IOException ex) {
                 Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
             }
