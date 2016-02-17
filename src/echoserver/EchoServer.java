@@ -58,7 +58,7 @@ public class EchoServer
 
     public static void main(String[] args)
     {
-        String ip = "localhost";
+        String ip = "100.119.138.147";
         int port = 9999;
         try
         {

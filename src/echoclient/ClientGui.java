@@ -28,6 +28,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     EchoClient c;
     DefaultListModel listModel;
     boolean isLoggedIn;
+    boolean isConnected;
 
     public ClientGui()
     {
@@ -36,6 +37,9 @@ public class ClientGui extends javax.swing.JFrame implements Observer
         username.requestFocus();
         isLoggedIn = false;
         listModel = new DefaultListModel();
+        listModel.clear();
+        listofusers.setModel(listModel);
+        isConnected = false;
 
     }
 
@@ -311,25 +315,29 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     }//GEN-LAST:event_portActionPerformed
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        try
+        if (!isConnected)
         {
-            String navn = username.getText();
-            c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()), this);
-            Thread client = new Thread(c);
-            client.start();
-            System.out.println("her er usrName:" + navn);
-            usernamelabel.setText(navn);
-            c.addObserver(this);
+            try
+            {
+                String navn = username.getText();
+                c = new EchoClient(StringIp.getText(), Integer.parseInt(port.getText()), this);
+                Thread client = new Thread(c);
+                client.start();
+                System.out.println("her er usrName:" + navn);
+                usernamelabel.setText(navn);
+                c.addObserver(this);
 
-            client.sleep(1000);
-            System.out.println("her er c: " + c.toString() + navn);
-            c.send("USER#" + navn);
-            isLoggedIn = true;
-            popList(c.getUserArray());
-            connectButton.setEnabled(false);
-        } catch (IOException | InterruptedException ex)
-        {
-            Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+                client.sleep(1000);
+                System.out.println("her er c: " + c.toString() + navn);
+                c.send("USER#" + navn);
+                isLoggedIn = true;
+                popList(c.getUserArray());
+
+                isConnected = true;
+            } catch (IOException | InterruptedException ex)
+            {
+                Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }//GEN-LAST:event_connectButtonActionPerformed
