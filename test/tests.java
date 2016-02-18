@@ -30,24 +30,27 @@ public class tests implements Observer{
      *
      */
     
-    EchoClient ec;
+    static EchoClient ec;
+    
+    
+    
     ClientGui cg;
     
     @BeforeClass
     public static void setUpClass(){
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                EchoServer.main(null);
-            }
-        }).start();
+//
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                EchoServer.main(null);
+//            }
+//        }).start();
     }
 
     @AfterClass
     public static void tearDownClass() {
-        EchoServer.stopServer();
-        
+       
+        ec.send("LOGOUT#");
     }
     
     private CountDownLatch lock = new CountDownLatch(1);
