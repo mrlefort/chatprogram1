@@ -286,6 +286,10 @@ public class ClientGui extends javax.swing.JFrame implements Observer
                 }
             }
         }
+        else
+        {
+          JOptionPane.showMessageDialog(null, "You need to connect to a server first. (Click the connect button in the top right corner", "ALERT: " + "No connection to a server.", JOptionPane.INFORMATION_MESSAGE);  
+        }
     }
 
     public void popList(String[] userNames)
@@ -315,8 +319,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     }//GEN-LAST:event_portActionPerformed
 
     public void EchoGuiConnect(){
-           if (!isConnected)
-        {
+
             try
             {
                 String navn = username.getText();
@@ -338,7 +341,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
             {
                 Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        
 
     }
     
@@ -347,7 +350,22 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     
     
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-      EchoGuiConnect();
+   
+                   if (!isConnected)
+        {
+        
+            if ((port.getText().matches("[0-9]+")))
+            {
+        EchoGuiConnect();
+            }
+            else
+            { JOptionPane.showMessageDialog(null, "Port number must be in integer format (In numbers only)", "ALERT: " + "Port Failure.", JOptionPane.INFORMATION_MESSAGE); }
+        }
+                   else
+                   {
+                      JOptionPane.showMessageDialog(null, "YOU ARE ALLREADY CONNECTED.", "ALERT: " + "Connection failure.", JOptionPane.INFORMATION_MESSAGE);
+                   }
+                   
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -357,22 +375,40 @@ public class ClientGui extends javax.swing.JFrame implements Observer
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void logout()
+    private void logout() throws InterruptedException
     {
+   
+             if(isLoggedIn == true)
+       {
+      
         c.send("LOGOUT#");
-
         super.dispose();
+       }
+             else
+             {
+                 super.dispose();
+             }
     }
 
     private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
-        logout();
+      
+  
+        try {
+            logout();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_logoutButtonActionPerformed
 
     private void beskedKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_beskedKeyPressed
         // TODO add your handling code here:
         if (evt.getKeyCode() == 27)
         {
-            logout();
+            try {
+                logout();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if (evt.getKeyCode() == 10)
         {
@@ -381,13 +417,21 @@ public class ClientGui extends javax.swing.JFrame implements Observer
     }//GEN-LAST:event_beskedKeyPressed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        logout();
+        try {
+            logout();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_formWindowClosing
 
     private void listofusersKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_listofusersKeyPressed
         if (evt.getKeyCode() == 27)
         {
-            logout();
+            try {
+                logout();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ClientGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_listofusersKeyPressed
 

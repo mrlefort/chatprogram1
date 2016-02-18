@@ -67,13 +67,15 @@ public class EchoClient extends Observable implements Runnable {
 
 
     public String receive() {
-
+        
+        
         String msg = input.nextLine();
         String msg2 = msg;
 
         if (msg.equals("LOGOUT#")) {
             try {
                 socket.close();
+
                 
             } catch (IOException ex) {
                 Logger.getLogger(EchoClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -134,6 +136,8 @@ public class EchoClient extends Observable implements Runnable {
         }
 
     }
+    
+
 
     @Override
     public void run() {
