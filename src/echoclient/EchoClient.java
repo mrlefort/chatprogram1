@@ -109,6 +109,10 @@ public class EchoClient extends Observable implements Runnable {
         this.ip = ip;
         this.gui = gui;
     }
+    
+    
+    
+    
 
     //splits the message received
     public void splitMessageFirst(String message) {

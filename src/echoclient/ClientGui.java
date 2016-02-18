@@ -239,7 +239,7 @@ public class ClientGui extends javax.swing.JFrame implements Observer
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void send()
+    public void send()
     {
         if (isLoggedIn)
         {
@@ -314,8 +314,8 @@ public class ClientGui extends javax.swing.JFrame implements Observer
         // TODO add your handling code here:
     }//GEN-LAST:event_portActionPerformed
 
-    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        if (!isConnected)
+    public void EchoGuiConnect(){
+           if (!isConnected)
         {
             try
             {
@@ -340,6 +340,14 @@ public class ClientGui extends javax.swing.JFrame implements Observer
             }
         }
 
+    }
+    
+    
+    
+    
+    
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+      EchoGuiConnect();
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
