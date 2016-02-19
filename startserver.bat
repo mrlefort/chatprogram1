@@ -1,1 +1,1 @@
-java -cp Echo.jar echoserver.EchoServer localhost 9999
+java -cp chatprogram.jar echoserver.EchoServer 100.119.80.33 9999

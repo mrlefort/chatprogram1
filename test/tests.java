@@ -61,7 +61,7 @@ public class tests implements Observer{
     @Test
     public void send() throws IOException, InterruptedException {
         cg = new ClientGui();
-        ec = new EchoClient("13.70.194.148", 9999, cg);
+        ec = new EchoClient("mrlefortVM.cloudapp.net", 9999, cg);
         Thread t1 = new Thread(ec);
         t1.start();
         ec.addObserver(this);

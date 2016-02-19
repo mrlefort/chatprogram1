@@ -1,1 +1,1 @@
-java -cp EchoSteffen.jar echoclient.ClientGui localhost 9999
+java -cp chatprogram.jar echoclient.ClientGui

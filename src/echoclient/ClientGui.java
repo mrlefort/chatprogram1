@@ -95,7 +95,12 @@ public class ClientGui extends javax.swing.JFrame implements Observer
             }
         });
 
-        StringIp.setText("13.70.194.148");
+        StringIp.setText("13.69.193.158");
+        StringIp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StringIpActionPerformed(evt);
+            }
+        });
 
         port.setText("9999");
         port.addActionListener(new java.awt.event.ActionListener() {
@@ -434,6 +439,10 @@ public class ClientGui extends javax.swing.JFrame implements Observer
             }
         }
     }//GEN-LAST:event_listofusersKeyPressed
+
+    private void StringIpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StringIpActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_StringIpActionPerformed
 
     /**
      * @param args the command line arguments

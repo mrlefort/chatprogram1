@@ -169,8 +169,11 @@
         </Component>
         <Component class="javax.swing.JTextField" name="StringIp">
           <Properties>
-            <Property name="text" type="java.lang.String" value="13.70.194.148"/>
+            <Property name="text" type="java.lang.String" value="13.69.193.158"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="StringIpActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="port">
           <Properties>
